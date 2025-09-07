@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-
-const SPREADSHEET_API_URL = process.env.NEXT_PUBLIC_SPREADSHEET_API_URL || 'https://script.google.com/macros/s/AKfycbxC9TDCUaBS9xybpn-4sfr_UKl92lbGRdh3YHLF9CjA5wnz_0SVNMPKgQ30aGiCqBlxvA/exec';
+import { buildSheetUrl } from '@/config/sheets';
 
 const RSVPSchema = z.object({
   // New field format (prioritas)
@@ -34,11 +33,9 @@ const RSVPSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('🔧 API Route - Raw request body:', body);
     
     // Validate the request body
     const validatedData = RSVPSchema.parse(body);
-    console.log('🔧 API Route - Validated data:', validatedData);
     
     // Prepare data for Google Sheets sesuai dengan struktur yang diminta
     // Struktur: id, nama_lengkap, no_telopon, jumlah_tamu, hadir, ucapan, created_at, update_at
@@ -55,10 +52,8 @@ export async function POST(request: NextRequest) {
       }
     };
     
-    console.log('🔧 API Route - Sheet data to send:', sheetData);
-    
     // Send to Google Sheets dengan parameter sheet
-    const urlWithParams = `${SPREADSHEET_API_URL}?sheet=wedding3`;
+    const urlWithParams = buildSheetUrl();
     const response = await fetch(urlWithParams, {
       method: 'POST',
       headers: {
@@ -73,7 +68,6 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await response.json();
-    console.log('🔧 API Route - Google Sheets response:', result);
     
     return NextResponse.json({
       success: true,

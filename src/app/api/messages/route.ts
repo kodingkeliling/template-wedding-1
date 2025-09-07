@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const SPREADSHEET_API_URL = process.env.NEXT_PUBLIC_SPREADSHEET_API_URL || 'https://script.google.com/macros/s/AKfycbxC9TDCUaBS9xybpn-4sfr_UKl92lbGRdh3YHLF9CjA5wnz_0SVNMPKgQ30aGiCqBlxvA/exec';
+import { buildSheetUrl } from '@/config/sheets';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('Fetching messages from:', SPREADSHEET_API_URL);
     
-    // Add timestamp and sheet parameter to Google Apps Script URL
-    const timestamp = Date.now();
-    const urlWithParams = `${SPREADSHEET_API_URL}?sheet=wedding3&t=${timestamp}`;
+    // Build URL with sheet parameter and timestamp
+    const urlWithParams = buildSheetUrl(undefined, true);
     
     const response = await fetch(urlWithParams, {
       method: 'GET',
@@ -51,9 +48,7 @@ export async function GET(request: NextRequest) {
         
         return isValid;
       });
-      
-      console.log(`Filtered ${data.data.length - validMessages.length} invalid messages`);
-      console.log(`Returning ${validMessages.length} valid messages`);
+
       data.data = validMessages;
     }
     

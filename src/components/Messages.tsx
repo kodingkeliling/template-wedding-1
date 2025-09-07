@@ -6,22 +6,16 @@ import { useMessages } from '@/context/MessagesContext';
 
 export default function Messages() {
   const { messages, loading, error } = useMessages();
-  
-  console.log('🎨 Messages - Current messages from context:', messages);
 
   const formatDate = (timestamp: string) => {
-    console.log('formatDate received timestamp:', timestamp);
     
     if (!timestamp || timestamp.trim() === '') {
-      console.log('Timestamp is empty or null');
       return 'Tanggal tidak tersedia';
     }
     
     const date = new Date(timestamp);
-    console.log('Parsed date:', date, 'isValid:', !isNaN(date.getTime()));
     
     if (isNaN(date.getTime())) {
-      console.log('Invalid date detected');
       return 'Tanggal tidak valid';
     }
     
